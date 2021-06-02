@@ -1,2 +1,4 @@
 # PythonProjects
-A repository of my Python projects
+
+
+**AboutMyLocation** - An application that provides data about the current city, such as area, total population, population density, etc.
