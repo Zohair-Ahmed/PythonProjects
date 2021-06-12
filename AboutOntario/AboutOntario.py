@@ -14,6 +14,7 @@ def createTable():
 
     ontDataFrame = pd.DataFrame(ontTable[0]) # convert table to dataframe
     ontDataFrame = ontDataFrame.drop(["Municipalstatus", "Census division"], axis=1) # drop the unwanted columns
+    ontDataFrame.to_csv('PythonProjects/AboutOntario/ontCitiesInfo.csv', index = False) # save to csv file
 
     print(ontDataFrame)
 
