@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 import csv
 
 # FUNCTIONS
-
-
 def createTable():  # create csv file of Ontario cities
     url = "https://en.wikipedia.org/wiki/List_of_cities_in_Ontario"  # URL
     response = requests.get(url)
@@ -33,6 +31,7 @@ def aboutMyCity():  # get info about user input city
 
     with open('PythonProjects/AboutOntario/ontCitiesInfo.csv', 'rt') as f:
         reader = csv.reader(f, delimiter=',')
+        i = -1 # row counter
         for row in reader:
             if usrCity == row[0]:
                 print("\nWhat do you want to know about " + usrCity + "?\n")
@@ -41,21 +40,34 @@ def aboutMyCity():  # get info about user input city
                 action = int(action)
 
                 if action == 1:
-                    print("\nPopulation(2016): ")
+                    print("\nPopulation(2016): " + row[1])
                 elif action == 2:
-                    print("\nPopulation(2011): ")
+                    print("\nPopulation(2011): " + row[2])
                 elif action == 3:
-                    print("\nChange In Population from 2011 to 2016(%): ")
+                    print("\nChange In Population from 2011 to 2016(%): " + row[3])
                 elif action == 4:
-                    print("\nArea(km²): ")
+                    print("\nArea(km²): " + row[4])
                 elif action == 5:
-                    print("\nPopulation Density: ")
+                    print("\nPopulation Density: " + row[5])
                 elif action == 6:
-                    print("\nOption 6")
+                    print("\n" + str(ontDataFrame.loc[i, :]))
                 else:
                     print("\nOption " + str(action) + " not available.")
                 return
+            i += 1
+
         print(usrCity + " is not a city in Ontario. Try again!")
+
+def compareCities():
+    city1 = input("Select City 1:\n")
+    city1 = str(city1)
+
+    # with open('PythonProjects/AboutOntario/ontCitiesInfo.csv', 'rt') as f:
+    #     reader = csv.reader(f, delimiter=',')
+    #     for row in reader:
+          
+
+    city2 = input("Select City 2:\n")
 
 
 # MAIN METHOD
