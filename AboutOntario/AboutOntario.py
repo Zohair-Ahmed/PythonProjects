@@ -5,32 +5,57 @@ from bs4 import BeautifulSoup
 import csv
 
 # FUNCTIONS
-def createTable(): # create csv file of Ontario cities
-    url = "https://en.wikipedia.org/wiki/List_of_cities_in_Ontario" #URL
+
+
+def createTable():  # create csv file of Ontario cities
+    url = "https://en.wikipedia.org/wiki/List_of_cities_in_Ontario"  # URL
     response = requests.get(url)
 
-    getPage = BeautifulSoup(response.text, 'html.parser') # get HTML page
-    [s.extract() for s in getPage('sup')] # remove superscripts
-    getTable = getPage.find('table', {'class': "wikitable"}) # get the table from the HTML page
-    ontTable = pd.read_html(str(getTable)) # read the table
+    getPage = BeautifulSoup(response.text, 'html.parser')  # get HTML page
+    [s.extract() for s in getPage('sup')]  # remove superscripts
+    # get the table from the HTML page
+    getTable = getPage.find('table', {'class': "wikitable"})
+    ontTable = pd.read_html(str(getTable))  # read the table
 
     global ontDataFrame
-    ontDataFrame = pd.DataFrame(ontTable[0]) # convert table to dataframe
-    ontDataFrame = ontDataFrame.drop(["Municipalstatus", "Census division"], axis=1) # drop the unwanted columns
-    ontDataFrame = ontDataFrame.rename(columns={"Populationdensity": "Population Density"})
-    ontDataFrame.to_csv('PythonProjects/AboutOntario/ontCitiesInfo.csv', index = False) # save to csv file
+    ontDataFrame = pd.DataFrame(ontTable[0])  # convert table to dataframe
+    ontDataFrame = ontDataFrame.drop(
+        ["Municipalstatus", "Census division"], axis=1)  # drop the unwanted columns
+    ontDataFrame = ontDataFrame.rename(
+        columns={"Populationdensity": "Population Density"})
+    # save to csv file
+    ontDataFrame.to_csv(
+        'PythonProjects/AboutOntario/ontCitiesInfo.csv', index=False)
 
-def aboutMyCity(): # get info about user input city
+
+def aboutMyCity():  # get info about user input city
     usrCity = input("What is your city?\n")
 
     with open('PythonProjects/AboutOntario/ontCitiesInfo.csv', 'rt') as f:
-        reader = csv.reader(f, delimiter = ',')
+        reader = csv.reader(f, delimiter=',')
         for row in reader:
             if usrCity == row[0]:
-                print(row[0])
+                print("\nWhat do you want to know about " + usrCity + "?\n")
+                cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\n"
+                action = input(cityCmmnd)
+                action = int(action)
+
+                if action == 1:
+                    print("\nPopulation(2016): ")
+                elif action == 2:
+                    print("\nPopulation(2011): ")
+                elif action == 3:
+                    print("\nChange In Population from 2011 to 2016(%): ")
+                elif action == 4:
+                    print("\nArea(km²): ")
+                elif action == 5:
+                    print("\nPopulation Density: ")
+                elif action == 6:
+                    print("\nOption 6")
+                else:
+                    print("\nOption " + str(action) + " not available.")
                 return
         print(usrCity + " is not a city in Ontario. Try again!")
-        
 
 
 # MAIN METHOD
@@ -43,10 +68,10 @@ getAction = int(getAction)
 while getAction != 0:
     if getAction == 1:
         print(ontDataFrame)
-    if getAction == 2:
+    elif getAction == 2:
         aboutMyCity()
-    
+
     getAction = input(actions)
-    getAction = int(getAction)  
+    getAction = int(getAction)
 
 print("\nSee ya later, eh!")
