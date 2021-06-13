@@ -1,8 +1,13 @@
+# IMPORT STATEMENTS
 from os import closerange
 import pandas as pd
 import requests
+from requests.api import get
 from bs4 import BeautifulSoup
 import csv
+
+# GLOBAL VARIABLES
+cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\t0 - Exit\n\n"
 
 # FUNCTIONS
 def createTable():  # create csv file of Ontario cities
@@ -35,6 +40,21 @@ def searchCity(city):  # city -> usr input, see if city exists
             i += 1
         return -1
 
+def theAction(action, usrCity, cityRow): # prints the output based on the user input
+    if action == 1:
+        return "\n" + usrCity +"'s Population(2016): " + str(ontDataFrame.loc[cityRow, "Population(2016)"])
+    elif action == 2:
+        return "\n" + usrCity +"'s Population(2011): " + str(ontDataFrame.loc[cityRow, "Population(2011)"])
+    elif action == 3:
+        return "\n" + usrCity +"'s Change In Population from 2011 to 2016(%): " + str(ontDataFrame.loc[cityRow, "Change(%)"])
+    elif action == 4:
+        return "\n" + usrCity +"'s Area(km²): " + str(ontDataFrame.loc[cityRow, "Area(km²)"])
+    elif action == 5:
+        return "\n" + usrCity +"'s Population Density: " + str(ontDataFrame.loc[cityRow, "Population Density"])
+    elif action == 6:
+        print("\n" + str(ontDataFrame.loc[cityRow, :]))
+    else:
+        print("\nOption " + str(action) + " not available.")
 
 def aboutMyCity():  # get info about user input city
     usrCity = input("What is your city?\n")
@@ -44,96 +64,43 @@ def aboutMyCity():  # get info about user input city
         print("Unfortunately, there is no documentation on " + usrCity)
     else:
         print("\nWhat do you want to know about " + usrCity + "?\n")
-        cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\t0 - Exit\n\n"
         action = input(cityCmmnd)
         action = int(action)
 
         while action != 0:
-            if action == 1:
-                print("\nPopulation(2016): " +
-                      str(ontDataFrame.loc[cityRow, "Population(2016)"]))
-            elif action == 2:
-                print("\nPopulation(2011): " +
-                      str(ontDataFrame.loc[cityRow, "Population(2011)"]))
-            elif action == 3:
-                print("\nChange In Population from 2011 to 2016(%): " +
-                      str(ontDataFrame.loc[cityRow, "Change(%)"]))
-            elif action == 4:
-                print("\nArea(km²): " +
-                      str(ontDataFrame.loc[cityRow, "Area(km²)"]))
-            elif action == 5:
-                print("\nPopulation Density: " +
-                      str(ontDataFrame.loc[cityRow, "Population Density"]))
-            elif action == 6:
-                print("\n" + str(ontDataFrame.loc[cityRow, :]))
-            else:
-                print("\nOption " + str(action) + " not available.")
-
+            print(theAction(action, usrCity, cityRow))
             print("\nWhat do you want to know about " + usrCity + "?\n")
-            cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\t0 - Exit\n\n"
             action = input(cityCmmnd)
             action = int(action)
 
-def compareCities():
-    city1 = input("\nSelect City 1:\n")
-    city1 = str(city1)
+def selectCity(cityNum):
+    city = input("\nSelect City " + str(cityNum) + ":\n")
+    city = str(city)
+    cityRow = searchCity(city)
+
+    while cityRow == -1:
+        print("Unfortunately, there is no documentation on " + city + ". Try again.")
+        city = input("\nSelect City 1:\n")
+        city = str(city)
+        cityRow = searchCity(city)
+    
+    return city
+
+def compareCities(): # compare two cities specified by the user input
+    city1 = selectCity(1)
     city1Row = searchCity(city1)
-
-    while city1Row == -1:
-        print("Unfortunately, there is no documentation on " + city1 + ". Try again.")
-        city1 = input("\nSelect City 1:\n")
-        city1 = str(city1)
-        city1Row = searchCity(city1)
-
-    city2 = input("\nSelect City 2:\n")
-    city2 = str(city2)
+    city2 = selectCity(2)
     city2Row = searchCity(city2)
 
-    while city2Row == -1:
-        print("Unfortunately, there is no documentation on " + city2 + ". Try again.")
-        city2 = input("\nSelect City 2:\n")
-        city2 = str(city2)
-        city2Row = searchCity(city2)
-
     print("\nWhat do you want to know about these cities?\n")
-    cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\t0 - Exit\n\n"
     action = input(cityCmmnd)
     action = int(action)
 
     while action != 0:
-        if action == 1:
-            print("\n" + city1 +"'s Population(2016): " +
-                    str(ontDataFrame.loc[city1Row, "Population(2016)"]))
-            print(city2 +"'s Population(2016): " +
-                    str(ontDataFrame.loc[city2Row, "Population(2016)"]))
-        elif action == 2:
-            print("\n" + city1 +"'s Population(2011): " +
-                str(ontDataFrame.loc[city1Row, "Population(2011)"]))
-            print(city2 +"'s Population(2011): " +
-                str(ontDataFrame.loc[city2Row, "Population(2011)"]))
-        elif action == 3:
-            print("\n" + city1 +"'s Change In Population from 2011 to 2016(%): " +
-                str(ontDataFrame.loc[city1Row, "Change(%)"]))
-            print(city2 +"'s Change In Population from 2011 to 2016(%): " +
-                str(ontDataFrame.loc[city2Row, "Change(%)"]))
-        elif action == 4:
-            print("\n" + city1 +"'s Area(km²): " +
-                str(ontDataFrame.loc[city1Row, "Area(km²)"]))
-            print(city2 +"'s Area(km²): " +
-                str(ontDataFrame.loc[city2Row, "Area(km²)"]))
-        elif action == 5:
-            print(city1 +"'s Population Density: " +
-                str(ontDataFrame.loc[city1Row, "Population Density"]))
-            print(city2 +"'s Population Density: " +
-                str(ontDataFrame.loc[city2Row, "Population Density"]))
-        elif action == 6:
-            print("\n" + str(ontDataFrame.loc[city1Row, :]))
-            print("\n" + str(ontDataFrame.loc[city2Row, :]))
-        else:
-            print("\nOption " + str(action) + " not available.")
+        print(theAction(action, city1, city1Row)) # info about city 1
+        print(theAction(action, city2, city2Row)) # info about city 2
 
         print("\nWhat do you want to know about these cities?\n")
-        cityCmmnd = "\t1 - Population(2016)\n\t2 - Population(2011)\n\t3 - Change In Population from 2011 to 2016(%)\n\t4 - Area(km²)\n\t5 - Population Density\n\t6 - All the Above\n\t0 - Exit\n\n"
         action = input(cityCmmnd)
         action = int(action)
 
@@ -157,4 +124,4 @@ while getAction != 0:
     getAction = input(actions)
     getAction = int(getAction)
 
-print("\nSee ya later, eh!")
+print("\nSee ya later, eh!") # if 0 is entered
